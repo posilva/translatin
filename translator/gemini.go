@@ -15,31 +15,10 @@ const (
 	defaultTimeout = 5 * time.Second
 )
 
-type Query struct {
-	ID             string
-	Key            string
-	SourceLanguage string
-	TargetLanguage string
-	Text           string
-}
-
-type QueryResult struct {
-	QueryID string
-	Outcome string
-}
-
-type Translator interface {
-	Translate(query Query) (QueryResult, error)
-}
-
 // GeminiTranslator translates text using the Gemini API.
 type GeminiTranslator struct {
 	client *genai.Client
 	model  *genai.GenerativeModel
-}
-
-func Sanity() {
-	fmt.Println("Gemini Translator")
 }
 
 // NewDefaultGeminiTranslatorFromEnv creates a new GeminiTranslator from environment variables.
@@ -84,7 +63,7 @@ func (t *GeminiTranslator) Translate(query Query) (QueryResult, error) {
 			buffer.WriteString(fmt.Sprintf("%s", p))
 		}
 	}
-	return QueryResult{QueryID: query.ID, Outcome: buffer.String()}, nil
+	return QueryResult{Query: query, Outcome: buffer.String()}, nil
 }
 
 func defaultModel(client *genai.Client) *genai.GenerativeModel {
